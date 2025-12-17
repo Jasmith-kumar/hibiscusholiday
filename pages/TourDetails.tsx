@@ -205,8 +205,8 @@ const TourDetails: React.FC = () => {
                    <div className="relative z-10">
                     <h3 className="font-serif font-bold text-xl mb-2">Have Questions?</h3>
                     <p className="text-stone-400 text-sm mb-6">Our travel experts are here to customize your trip.</p>
-                    <a href="tel:+919876543210" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-full transition-colors border border-white/10 w-full">
-                      <Phone size={18} /> +91 98765 43210
+                    <a href="tel:+918055515234" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-full transition-colors border border-white/10 w-full">
+                      <Phone size={18} /> +91 80555 15234
                     </a>
                    </div>
                 </div>

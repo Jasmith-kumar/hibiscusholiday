@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Flower2 } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar: React.FC = () => {
@@ -41,20 +41,12 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group z-50 relative">
-          <div className={`p-1.5 rounded-full transition-colors duration-300 ${isScrolledOrNotHome ? 'bg-hibiscus-50' : 'bg-white/10'}`}>
-            <Flower2 
-              className={`w-6 h-6 md:w-8 md:h-8 ${isScrolledOrNotHome ? 'text-hibiscus-600' : 'text-white'} transition-transform duration-500 group-hover:rotate-45`} 
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className={`text-xl md:text-2xl font-serif font-bold leading-none tracking-tight ${isScrolledOrNotHome ? 'text-stone-900' : 'text-white'}`}>
-              Hibiscus
-            </span>
-            <span className={`text-sm font-script tracking-wider ${isScrolledOrNotHome ? 'text-hibiscus-600' : 'text-white/90'}`}>
-              Holiday
-            </span>
-          </div>
+        <Link to="/" className="flex items-center z-50 relative group">
+          <img 
+            src="https://storage.googleapis.com/clientmedia/hibiscusholiday/Untitled%20design%20(6).png" 
+            alt="Hibiscus Holidays" 
+            className="h-10 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop Menu */}

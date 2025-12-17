@@ -53,17 +53,17 @@ const Contact: React.FC = () => {
                 <ContactInfoItem 
                   icon={<Phone size={24} />}
                   label="Talk to an Expert"
-                  lines={['+91 98765 43210', '+91 11 2345 6789']}
+                  lines={['personal : +91 93706 32922', 'company : +91 80555 15234']}
                 />
                 <ContactInfoItem 
                   icon={<Mail size={24} />}
                   label="Email Us"
-                  lines={['hello@hibiscusholiday.com', 'customercare@hibiscusholiday.com']}
+                  lines={['personal : sandipk2604@hotmail.com', 'company : sales.hibiscusholidays@gmail.com']}
                 />
                 <ContactInfoItem 
                   icon={<MapPin size={24} />}
                   label="Visit Us"
-                  lines={['108, Hibiscus Lane, Connaught Place', 'New Delhi, India - 110001']}
+                  lines={['Plot No. 34-B, Saraswati Nagar, Nr. Uday Nagar Square, Nagpur-34 (MS)-India']}
                 />
               </div>
             </div>
@@ -109,7 +109,7 @@ const Contact: React.FC = () => {
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 focus:border-hibiscus-500 focus:ring-2 focus:ring-hibiscus-100 outline-none transition-all"
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 80555 15234"
                   />
                 </div>
                 <div>
