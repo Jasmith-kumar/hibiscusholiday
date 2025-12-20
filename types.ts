@@ -1,3 +1,5 @@
+export type PackageType = 'domestic' | 'international' | 'trending' | 'group-departures' | 'jungle-safaris' | 'cruise';
+
 export interface Tour {
   id: string;
   title: string;
@@ -9,7 +11,9 @@ export interface Tour {
   highlights: string[];
   itinerary: ItineraryDay[];
   category: 'Culture' | 'Nature' | 'Adventure' | 'Spiritual' | 'Relaxation';
+  packageType: PackageType;
   featured: boolean;
+  showInPopup?: boolean;
 }
 
 export interface ItineraryDay {

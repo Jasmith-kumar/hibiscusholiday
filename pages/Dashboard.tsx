@@ -26,9 +26,12 @@ import {
   EyeOff,
   Star,
   ListOrdered,
-  Minus
+  Minus,
+  Flame,
+  Sparkles
 } from 'lucide-react';
-import { Tour } from '../types';
+import { Tour, PackageType } from '../types';
+import { PACKAGE_TYPES } from '../constants';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -66,7 +69,9 @@ const Dashboard: React.FC = () => {
     image: '',
     description: '',
     category: 'Culture',
+    packageType: 'domestic',
     featured: false,
+    showInPopup: false,
     highlights: [],
     itinerary: []
   };
@@ -161,6 +166,19 @@ const Dashboard: React.FC = () => {
       } else {
         await addTour(editingTour as Tour);
       }
+      
+      // If this tour is set to showInPopup, remove it from other tours (after main save succeeds)
+      if (editingTour.showInPopup) {
+        const otherPopupTours = tours.filter(t => t.id !== editingTour.id && t.showInPopup);
+        for (const tour of otherPopupTours) {
+          try {
+            await updateTour(tour.id, { showInPopup: false });
+          } catch (e) {
+            console.warn('Could not remove popup from tour:', tour.id);
+          }
+        }
+      }
+
       setIsEditing(false);
       setEditingTour(null);
       setNewHighlight('');
@@ -196,7 +214,7 @@ const Dashboard: React.FC = () => {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1920&auto=format&fit=crop" 
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1920&auto=format&fit=crop" 
             alt="Login Background" 
             className="w-full h-full object-cover opacity-40 blur-sm"
           />
@@ -447,10 +465,18 @@ const Dashboard: React.FC = () => {
                        <p className="text-stone-500 text-xs mb-3 flex items-center gap-1">
                          <Map size={12} /> {tour.location}
                        </p>
-                       <div className="flex gap-2">
+                       <div className="flex gap-2 flex-wrap">
                          <span className="px-2 py-1 bg-stone-100 text-stone-500 text-xs rounded-md font-medium">{tour.category}</span>
+                         <span className="px-2 py-1 bg-hibiscus-50 text-hibiscus-600 text-xs rounded-md font-medium">
+                           {PACKAGE_TYPES.find(p => p.id === tour.packageType)?.name || tour.packageType}
+                         </span>
                          {tour.featured && (
                            <span className="px-2 py-1 bg-gold-100 text-gold-700 text-xs rounded-md font-bold">Featured</span>
+                         )}
+                         {tour.showInPopup && (
+                           <span className="px-2 py-1 bg-gradient-to-r from-hibiscus-500 to-hibiscus-600 text-white text-xs rounded-md font-bold flex items-center gap-1">
+                             <Flame size={10} /> Popup
+                           </span>
                          )}
                        </div>
                      </div>
@@ -515,7 +541,7 @@ const Dashboard: React.FC = () => {
                       className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-hibiscus-500"
                     />
                   </InputGroup>
-                  <InputGroup label="Category">
+                  <InputGroup label="Tour Type">
                     <select 
                        value={editingTour.category}
                        onChange={e => setEditingTour({...editingTour, category: e.target.value as any})}
@@ -526,6 +552,17 @@ const Dashboard: React.FC = () => {
                       <option value="Adventure">Adventure</option>
                       <option value="Spiritual">Spiritual</option>
                       <option value="Relaxation">Relaxation</option>
+                    </select>
+                  </InputGroup>
+                  <InputGroup label="Package Category">
+                    <select 
+                       value={editingTour.packageType}
+                       onChange={e => setEditingTour({...editingTour, packageType: e.target.value as PackageType})}
+                       className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-hibiscus-500"
+                    >
+                      {PACKAGE_TYPES.map(pkg => (
+                        <option key={pkg.id} value={pkg.id}>{pkg.icon} {pkg.name}</option>
+                      ))}
                     </select>
                   </InputGroup>
                   <InputGroup label="Image URL">
@@ -548,15 +585,38 @@ const Dashboard: React.FC = () => {
                   />
                 </InputGroup>
 
-                <div className="flex items-center gap-3">
-                   <input 
-                     type="checkbox" 
-                     id="featured"
-                     checked={editingTour.featured}
-                     onChange={e => setEditingTour({...editingTour, featured: e.target.checked})}
-                     className="w-5 h-5 accent-hibiscus-600"
-                   />
-                   <label htmlFor="featured" className="font-bold text-stone-700">Mark as Featured Tour</label>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex items-center gap-3">
+                     <input 
+                       type="checkbox" 
+                       id="featured"
+                       checked={editingTour.featured}
+                       onChange={e => setEditingTour({...editingTour, featured: e.target.checked})}
+                       className="w-5 h-5 accent-hibiscus-600"
+                     />
+                     <label htmlFor="featured" className="font-bold text-stone-700">Mark as Featured Tour</label>
+                  </div>
+
+                  {/* Show in Popup Toggle */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-hibiscus-50 to-gold-50 border border-hibiscus-100">
+                     <input 
+                       type="checkbox" 
+                       id="showInPopup"
+                       checked={editingTour.showInPopup || false}
+                       onChange={e => setEditingTour({...editingTour, showInPopup: e.target.checked})}
+                       className="w-5 h-5 accent-hibiscus-600"
+                     />
+                     <label htmlFor="showInPopup" className="font-bold text-stone-700 flex items-center gap-2">
+                       <Flame size={16} className="text-hibiscus-500" />
+                       Show in Trending Popup
+                       <Sparkles size={14} className="text-gold-500" />
+                     </label>
+                     {tours.some(t => t.showInPopup && t.id !== editingTour.id) && editingTour.showInPopup && (
+                       <span className="text-xs text-hibiscus-600 bg-hibiscus-100 px-2 py-1 rounded-full">
+                         Will replace current popup tour
+                       </span>
+                     )}
+                  </div>
                 </div>
 
                 {/* Highlights Section */}

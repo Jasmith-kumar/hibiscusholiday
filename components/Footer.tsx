@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, MapPin, ArrowRight, AtSign } from 'lucide-react';
+import { PACKAGE_TYPES } from '../constants';
+
+// Custom X (Twitter) Logo
+const XLogo = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 // Footer component with updated contact info
 
@@ -23,9 +31,10 @@ const Footer: React.FC = () => {
             Domestic & International Tour Packages | Wild Life & Adventure |Hotel | Flight | Visa & Passport | Car Rental | Cruises
             </p>
             <div className="flex space-x-4">
-              <SocialIcon icon={<Facebook size={18} />} />
-              <SocialIcon icon={<Instagram size={18} />} />
-              <SocialIcon icon={<Twitter size={18} />} />
+              <SocialIcon icon={<Facebook size={18} />} href="https://www.facebook.com/hibiscusholidays" />
+              <SocialIcon icon={<Instagram size={18} />} href="https://www.instagram.com/hibiscusholidays" />
+              <SocialIcon icon={<XLogo size={18} />} href="https://x.com/HibiscusHoliday" />
+              <SocialIcon icon={<AtSign size={18} />} href="https://www.threads.com/@hibiscusholidays" />
             </div>
           </div>
 
@@ -38,17 +47,25 @@ const Footer: React.FC = () => {
               <FooterLink to="/tours" text="All Journeys" />
               <FooterLink to="/contact" text="Contact Us" />
               <FooterLink to="/privacy" text="Privacy Policy" />
+              <FooterLink to="/terms" text="Terms & Conditions" />
             </ul>
           </div>
 
-          {/* Popular Tours */}
+          {/* Package Categories */}
           <div>
-            <h4 className="text-stone-900 font-serif text-lg font-semibold mb-6">Trending</h4>
+            <h4 className="text-stone-900 font-serif text-lg font-semibold mb-6">Our Packages</h4>
             <ul className="space-y-3 text-sm">
-              <FooterLink to="/tours/golden-triangle" text="Golden Triangle" />
-              <FooterLink to="/tours/kerala-backwaters" text="Kerala Bliss" />
-              <FooterLink to="/tours/ladakh-adventure" text="Ladakh Expedition" />
-              <FooterLink to="/tours/rajasthan-royal" text="Royal Rajasthan" />
+              {PACKAGE_TYPES.map((pkg) => (
+                <li key={pkg.id}>
+                  <Link 
+                    to={`/tours#${pkg.id}`} 
+                    className="flex items-center gap-2 text-stone-500 hover:text-hibiscus-600 transition-colors group"
+                  >
+                    <ArrowRight size={12} className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                    {pkg.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -60,7 +77,7 @@ const Footer: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-hibiscus-100 flex items-center justify-center shrink-0 group-hover:bg-hibiscus-600 transition-colors">
                   <MapPin size={16} className="text-hibiscus-600 group-hover:text-white" />
                 </div>
-                <span>Plot No. 34-B, Saraswati Nagar, Nr. Uday Nagar Square, Nagpur-34 (MS)-India</span>
+                <span>Plot No : 34, near Uday Nagar Road, Saraswati Nagar, Janki Nagar, Nagpur, Maharashtra 440034</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="w-8 h-8 rounded-full bg-hibiscus-100 flex items-center justify-center shrink-0 group-hover:bg-hibiscus-600 transition-colors">
@@ -79,33 +96,11 @@ const Footer: React.FC = () => {
 
         </div>
 
-        {/* Newsletter Section */}
-        <div className="border-t border-hibiscus-100 pt-10 mb-8">
-          <div className="bg-gradient-to-r from-hibiscus-600 to-hibiscus-700 p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-hibiscus-200">
-            <div>
-              <h3 className="text-white font-serif text-xl mb-2">Subscribe to our newsletter</h3>
-              <p className="text-hibiscus-100 text-sm">Get the latest travel updates and exclusive offers.</p>
-            </div>
-            <div className="flex w-full md:w-auto gap-2">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="bg-white/20 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:border-white focus:bg-white/30 w-full md:w-64"
-              />
-              <button className="bg-white text-hibiscus-600 hover:bg-hibiscus-50 px-6 py-3 rounded-lg font-bold transition-colors">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-stone-500">
+        <div className="border-t border-hibiscus-100 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-stone-500">
           <p>&copy; {new Date().getFullYear()} Hibiscus Holiday Pvt. Ltd. All rights reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0 items-center">
-            <Link to="/dashboard" className="hover:text-hibiscus-600 transition-colors">Admin</Link>
-            <a href="#" className="hover:text-hibiscus-600 transition-colors">Terms</a>
-            <a href="#" className="hover:text-hibiscus-600 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-hibiscus-600 transition-colors">Cookies</a>
+            <Link to="/terms" className="hover:text-hibiscus-600 transition-colors">Terms & Conditions</Link>
+            <Link to="/privacy" className="hover:text-hibiscus-600 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </div>
@@ -113,8 +108,8 @@ const Footer: React.FC = () => {
   );
 };
 
-const SocialIcon = ({ icon }: { icon: React.ReactNode }) => (
-  <a href="#" className="w-10 h-10 rounded-full bg-hibiscus-100 flex items-center justify-center text-hibiscus-600 hover:bg-hibiscus-600 hover:text-white transition-all duration-300">
+const SocialIcon = ({ icon, href }: { icon: React.ReactNode; href: string }) => (
+  <a href={href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-hibiscus-100 flex items-center justify-center text-hibiscus-600 hover:bg-hibiscus-600 hover:text-white transition-all duration-300">
     {icon}
   </a>
 );

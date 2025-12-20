@@ -58,12 +58,12 @@ const Contact: React.FC = () => {
                 <ContactInfoItem 
                   icon={<Mail size={24} />}
                   label="Email Us"
-                  lines={['personal : sandipk2604@hotmail.com', 'company : sales.hibiscusholidays@gmail.com']}
+                  lines={['company : sales.hibiscusholidays@gmail.com']}
                 />
                 <ContactInfoItem 
                   icon={<MapPin size={24} />}
                   label="Visit Us"
-                  lines={['Plot No. 34-B, Saraswati Nagar, Nr. Uday Nagar Square, Nagpur-34 (MS)-India']}
+                  lines={['Plot No : 34, near Uday Nagar Road, Saraswati Nagar, Janki Nagar, Nagpur, Maharashtra 440034']}
                 />
               </div>
             </div>
@@ -154,6 +154,32 @@ const Contact: React.FC = () => {
           </div>
 
         </div>
+
+        {/* Google Maps Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-16 max-w-6xl mx-auto"
+        >
+          <div className="text-center mb-8">
+            <span className="text-hibiscus-600 font-bold uppercase tracking-wider text-sm mb-2 block">Find Us</span>
+            <h2 className="text-3xl font-serif font-bold text-stone-900">Our Location</h2>
+          </div>
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-stone-100">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3722.2459995158656!2d79.11162567138672!3d21.10275650024414!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4bf54130ceea1%3A0x7f842ae38029d854!2sHibiscus%20Holidays!5e0!3m2!1sen!2sin!4v1766215830350!5m2!1sen!2sin" 
+              width="100%" 
+              height="450" 
+              style={{ border: 0 }}
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full"
+              title="Hibiscus Holidays Location"
+            ></iframe>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -37,8 +37,8 @@ const About: React.FC = () => {
             className="relative"
           >
             <img 
-              src="https://images.unsplash.com/photo-1621516709873-10776b7b0487?q=80&w=1200&auto=format&fit=crop" 
-              alt="Indian Woman Traditional" 
+              src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1200&auto=format&fit=crop" 
+              alt="Travel Adventure" 
               className="rounded-3xl shadow-2xl"
             />
             <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-gold-400/20 rounded-full blur-2xl -z-10"></div>

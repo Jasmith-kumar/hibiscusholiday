@@ -5,20 +5,24 @@ import { ArrowRight, ShieldCheck, Heart, Globe, Star, Users, Map } from 'lucide-
 import { TESTIMONIALS } from '../constants';
 import { useData } from '../context/DataContext';
 import TourCard from '../components/TourCard';
+import TrendingPopup from '../components/TrendingPopup';
 
 const Home: React.FC = () => {
   const { tours } = useData();
   const featuredTours = tours.filter(t => t.featured);
+  const popupTour = tours.find(t => t.showInPopup);
 
   return (
     <div className="w-full overflow-hidden bg-cream">
+      {/* Trending Tour Popup */}
+      {popupTour && <TrendingPopup tour={popupTour} />}
       
       {/* Hero Section */}
       <section className="relative h-[100vh] min-h-[600px] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=1920&auto=format&fit=crop" 
-            alt="Taj Mahal Sunrise" 
+            src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1920&auto=format&fit=crop" 
+            alt="India Gate Delhi" 
             className="w-full h-full object-cover"
           />
           {/* Enhanced Overlay for text readability */}
@@ -146,8 +150,8 @@ const Home: React.FC = () => {
             </div>
             <div className="relative order-1 lg:order-2">
               <div className="grid grid-cols-2 gap-4">
-                <img src="https://images.unsplash.com/photo-1598502525796-c6599cc653a7?q=80&w=800&auto=format&fit=crop" className="rounded-2xl translate-y-8 shadow-2xl border border-white/10" alt="Indian Architecture" />
-                <img src="https://images.unsplash.com/photo-1594103131343-25a661cc2407?q=80&w=800&auto=format&fit=crop" className="rounded-2xl shadow-2xl border border-white/10" alt="Indian Culture" />
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=800&auto=format&fit=crop" className="rounded-2xl translate-y-8 shadow-2xl border border-white/10" alt="Humayun's Tomb Delhi" />
+                <img src="https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&w=800&auto=format&fit=crop" className="rounded-2xl shadow-2xl border border-white/10" alt="Jaipur Palace" />
               </div>
             </div>
           </div>
