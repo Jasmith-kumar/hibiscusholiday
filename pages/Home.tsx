@@ -1,21 +1,155 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Heart, Globe, Star, Users, Map } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ShieldCheck, Heart, Globe, Star, Users, Map, X, MapPin, Calendar, Flame } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import { useData } from '../context/DataContext';
 import TourCard from '../components/TourCard';
-import TrendingPopup from '../components/TrendingPopup';
 
 const Home: React.FC = () => {
   const { tours } = useData();
   const featuredTours = tours.filter(t => t.featured);
+  
+  // Trending Popup State
+  const [showPopup, setShowPopup] = useState(false);
   const popupTour = tours.find(t => t.showInPopup);
+
+  useEffect(() => {
+    // Check if popup was already shown in this session
+    const popupShown = sessionStorage.getItem('trendingPopupShown');
+    
+    if (!popupShown && popupTour) {
+      // Show popup after a short delay for better UX
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [popupTour]);
+
+  const closePopup = () => {
+    setShowPopup(false);
+    sessionStorage.setItem('trendingPopupShown', 'true');
+  };
 
   return (
     <div className="w-full overflow-hidden bg-cream">
+      
       {/* Trending Tour Popup */}
-      {popupTour && <TrendingPopup tour={popupTour} />}
+      <AnimatePresence>
+        {showPopup && popupTour && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/70 backdrop-blur-sm"
+            onClick={closePopup}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 50 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={closePopup}
+                className="absolute top-4 right-4 z-20 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-stone-600 hover:text-stone-900 hover:bg-white shadow-lg transition-all"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Trending Badge */}
+              <div className="absolute top-4 left-4 z-20">
+                <motion.div
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 shadow-lg"
+                >
+                  <Flame size={16} className="animate-pulse" />
+                  TRENDING NOW
+                </motion.div>
+              </div>
+
+              {/* Tour Image */}
+              <div className="relative h-56 overflow-hidden">
+                <img
+                  src={popupTour.image}
+                  alt={popupTour.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                
+                {/* Price Tag */}
+                <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
+                  <span className="text-stone-500 text-xs">Starting from</span>
+                  <div className="text-2xl font-bold text-hibiscus-600">₹{popupTour.price.toLocaleString()}</div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
+                  <MapPin size={14} />
+                  <span>{popupTour.location}</span>
+                  <span className="text-stone-300">•</span>
+                  <Calendar size={14} />
+                  <span>{popupTour.days} Days</span>
+                </div>
+
+                <h3 className="text-2xl font-serif font-bold text-stone-900 mb-3">
+                  {popupTour.title}
+                </h3>
+
+                <p className="text-stone-600 text-sm leading-relaxed mb-4 line-clamp-2">
+                  {popupTour.description}
+                </p>
+
+                {/* Highlights */}
+                {popupTour.highlights && popupTour.highlights.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {popupTour.highlights.slice(0, 3).map((highlight, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-hibiscus-50 text-hibiscus-700 px-3 py-1 rounded-full text-xs font-medium"
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* CTA Buttons */}
+                <div className="flex gap-3">
+                  <Link
+                    to={`/tours/${popupTour.id}`}
+                    onClick={closePopup}
+                    className="flex-1 bg-gradient-to-r from-hibiscus-600 to-hibiscus-700 text-white py-3 rounded-xl font-bold text-center hover:from-hibiscus-700 hover:to-hibiscus-800 transition-all shadow-lg shadow-hibiscus-600/30 flex items-center justify-center gap-2"
+                  >
+                    View Details <ArrowRight size={18} />
+                  </Link>
+                  <Link
+                    to="/contact"
+                    onClick={closePopup}
+                    className="px-6 py-3 border-2 border-stone-200 text-stone-700 rounded-xl font-bold hover:bg-stone-50 transition-colors"
+                  >
+                    Enquire
+                  </Link>
+                </div>
+
+                {/* Urgency Text */}
+                <p className="text-center text-orange-600 text-xs font-bold mt-4 flex items-center justify-center gap-1">
+                  <Flame size={12} />
+                  Limited slots available! Book now to secure your spot.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Hero Section */}
       <section className="relative h-[100vh] min-h-[600px] flex items-center justify-center">

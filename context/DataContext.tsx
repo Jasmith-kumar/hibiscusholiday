@@ -3,7 +3,7 @@ import { Tour, Inquiry } from '../types';
 import { TOURS as INITIAL_TOURS } from '../constants';
 
 // API Base URL - uses relative URL in production (Vercel), localhost in development
-const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
+const API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';
 
 interface DataContextType {
   tours: Tour[];
@@ -22,8 +22,8 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Tours from MongoDB - initialize with fallback data for instant display
-  const [tours, setTours] = useState<Tour[]>(INITIAL_TOURS);
+  // Tours from MongoDB
+  const [tours, setTours] = useState<Tour[]>([]);
   const [toursLoading, setToursLoading] = useState(true);
 
   // Inquiries from MongoDB
@@ -37,13 +37,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await fetch(`${API_URL}/tours`);
       if (response.ok) {
         const data = await response.json();
-        // Only update if we got actual tours, otherwise keep fallback
-        if (data && Array.isArray(data) && data.length > 0) {
-          setTours(data);
-        } else {
-          console.warn('API returned empty tours, using fallback');
-          setTours(INITIAL_TOURS);
-        }
+        setTours(data);
       } else {
         // Fallback to constants if API fails
         console.warn('Failed to fetch tours from API, using fallback');

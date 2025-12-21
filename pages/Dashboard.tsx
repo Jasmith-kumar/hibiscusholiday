@@ -26,9 +26,7 @@ import {
   EyeOff,
   Star,
   ListOrdered,
-  Minus,
-  Flame,
-  Sparkles
+  Minus
 } from 'lucide-react';
 import { Tour, PackageType } from '../types';
 import { PACKAGE_TYPES } from '../constants';
@@ -74,6 +72,22 @@ const Dashboard: React.FC = () => {
     showInPopup: false,
     highlights: [],
     itinerary: []
+  };
+
+  // Handle Show in Popup toggle - ensures only one tour has this enabled
+  const handleShowInPopupChange = async (tourId: string, checked: boolean) => {
+    if (checked) {
+      // First, disable showInPopup for all other tours
+      for (const tour of tours) {
+        if (tour.showInPopup && tour.id !== tourId) {
+          await updateTour(tour.id, { ...tour, showInPopup: false });
+        }
+      }
+    }
+    // Then update the selected tour
+    if (editingTour) {
+      setEditingTour({ ...editingTour, showInPopup: checked });
+    }
   };
 
   // Add highlight
@@ -166,19 +180,6 @@ const Dashboard: React.FC = () => {
       } else {
         await addTour(editingTour as Tour);
       }
-      
-      // If this tour is set to showInPopup, remove it from other tours (after main save succeeds)
-      if (editingTour.showInPopup) {
-        const otherPopupTours = tours.filter(t => t.id !== editingTour.id && t.showInPopup);
-        for (const tour of otherPopupTours) {
-          try {
-            await updateTour(tour.id, { showInPopup: false });
-          } catch (e) {
-            console.warn('Could not remove popup from tour:', tour.id);
-          }
-        }
-      }
-
       setIsEditing(false);
       setEditingTour(null);
       setNewHighlight('');
@@ -474,9 +475,7 @@ const Dashboard: React.FC = () => {
                            <span className="px-2 py-1 bg-gold-100 text-gold-700 text-xs rounded-md font-bold">Featured</span>
                          )}
                          {tour.showInPopup && (
-                           <span className="px-2 py-1 bg-gradient-to-r from-hibiscus-500 to-hibiscus-600 text-white text-xs rounded-md font-bold flex items-center gap-1">
-                             <Flame size={10} /> Popup
-                           </span>
+                           <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-md font-bold flex items-center gap-1">🔥 Popup</span>
                          )}
                        </div>
                      </div>
@@ -596,26 +595,18 @@ const Dashboard: React.FC = () => {
                      />
                      <label htmlFor="featured" className="font-bold text-stone-700">Mark as Featured Tour</label>
                   </div>
-
-                  {/* Show in Popup Toggle */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-hibiscus-50 to-gold-50 border border-hibiscus-100">
+                  <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-red-50 px-4 py-3 rounded-xl border border-orange-200">
                      <input 
                        type="checkbox" 
                        id="showInPopup"
                        checked={editingTour.showInPopup || false}
-                       onChange={e => setEditingTour({...editingTour, showInPopup: e.target.checked})}
-                       className="w-5 h-5 accent-hibiscus-600"
+                       onChange={e => handleShowInPopupChange(editingTour.id || '', e.target.checked)}
+                       className="w-5 h-5 accent-orange-500"
                      />
-                     <label htmlFor="showInPopup" className="font-bold text-stone-700 flex items-center gap-2">
-                       <Flame size={16} className="text-hibiscus-500" />
-                       Show in Trending Popup
-                       <Sparkles size={14} className="text-gold-500" />
+                     <label htmlFor="showInPopup" className="font-bold text-orange-700 flex items-center gap-2">
+                       🔥 Show in Trending Popup
+                       <span className="text-xs text-orange-500 font-normal">(Only one tour can be selected)</span>
                      </label>
-                     {tours.some(t => t.showInPopup && t.id !== editingTour.id) && editingTour.showInPopup && (
-                       <span className="text-xs text-hibiscus-600 bg-hibiscus-100 px-2 py-1 rounded-full">
-                         Will replace current popup tour
-                       </span>
-                     )}
                   </div>
                 </div>
 

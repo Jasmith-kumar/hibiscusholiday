@@ -1,20 +1,5 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
   "rewrites": [
-    {
-      "source": "/api/tours/reseed",
-      "destination": "/api/tours/reseed"
-    },
-    {
-      "source": "/api/tours/:id",
-      "destination": "/api/tours/[id]"
-    },
-    {
-      "source": "/api/inquiries/:id",
-      "destination": "/api/inquiries/[id]"
-    },
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
@@ -36,3 +21,4 @@
     }
   ]
 }
+
