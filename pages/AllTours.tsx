@@ -7,7 +7,7 @@ import { PACKAGE_TYPES } from '../constants';
 import { PackageType } from '../types';
 
 const AllTours: React.FC = () => {
-  const { tours } = useData();
+  const { tours, toursLoading } = useData();
   const location = useLocation();
   
   // Get tab from URL hash or default to first tab (trending)
@@ -28,8 +28,11 @@ const AllTours: React.FC = () => {
     }
   }, [location.hash]);
 
-  // Filter tours by active tab
-  const filteredTours = tours.filter(tour => tour.packageType === activeTab);
+  // Filter tours by active tab - handle missing packageType by defaulting to 'domestic'
+  const filteredTours = tours.filter(tour => {
+    const tourPackageType = tour.packageType || 'domestic'; // Default to domestic if missing
+    return tourPackageType === activeTab;
+  });
 
   // Get active tab info
   const activeTabInfo = PACKAGE_TYPES.find(p => p.id === activeTab);
@@ -131,11 +134,21 @@ const AllTours: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {filteredTours.length === 0 ? (
+            {toursLoading ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-stone-100">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hibiscus-600 mx-auto mb-4"></div>
+                <p className="text-stone-500">Loading tours...</p>
+              </div>
+            ) : filteredTours.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-3xl border border-stone-100">
                 <div className="text-6xl mb-4">{activeTabInfo?.icon}</div>
                 <h3 className="text-xl font-bold text-stone-900 mb-2">No Tours Available Yet</h3>
                 <p className="text-stone-500">We're working on adding amazing {activeTabInfo?.name.toLowerCase()}. Check back soon!</p>
+                {tours.length > 0 && (
+                  <p className="text-xs text-stone-400 mt-4">
+                    Total tours in database: {tours.length} | Active tab: {activeTab}
+                  </p>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

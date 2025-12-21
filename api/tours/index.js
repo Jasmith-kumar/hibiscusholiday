@@ -183,10 +183,25 @@ export default async function handler(req, res) {
         console.log('✅ Seeded default tours');
       }
 
-      // Transform _id to id for frontend compatibility
+      // Ensure all tours have packageType field (migration for old tours)
+      const toursNeedingUpdate = tours.filter(tour => !tour.packageType);
+      if (toursNeedingUpdate.length > 0) {
+        console.log(`⚠️ Found ${toursNeedingUpdate.length} tours without packageType, updating...`);
+        for (const tour of toursNeedingUpdate) {
+          await db.collection('tours').updateOne(
+            { _id: tour._id },
+            { $set: { packageType: 'domestic' } } // Default to domestic
+          );
+        }
+        // Re-fetch tours after update
+        tours = await db.collection('tours').find({}).toArray();
+      }
+
+      // Transform _id to id for frontend compatibility and ensure packageType exists
       const transformed = tours.map(tour => ({
         ...tour,
         id: tour.id || tour._id.toString(),
+        packageType: tour.packageType || 'domestic', // Ensure packageType exists
         _id: undefined
       }));
 
