@@ -1,7 +1,7 @@
 import { connectToDatabase } from '../lib/mongodb.js';
 
-// Default tours to seed if collection is empty - FULL DATA
-const DEFAULT_TOURS = [
+// All tours data - this is the source of truth
+const ALL_TOURS = [
   {
     id: 'goa-package-3n4d',
     title: 'Goa Beach Escape',
@@ -283,52 +283,30 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Only allow POST method for reseeding
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed. Use POST to reseed.' });
+  }
+
   try {
     const { db } = await connectToDatabase();
 
-    // GET - Fetch all tours
-    if (req.method === 'GET') {
-      let tours = await db.collection('tours').find({}).toArray();
+    // Delete all existing tours
+    await db.collection('tours').deleteMany({});
+    console.log('✅ Deleted all existing tours');
 
-      // If no tours exist, seed with default tours
-      if (tours.length === 0) {
-        await db.collection('tours').insertMany(DEFAULT_TOURS);
-        tours = await db.collection('tours').find({}).toArray();
-        console.log('✅ Seeded default tours');
-      }
+    // Insert all tours fresh
+    await db.collection('tours').insertMany(ALL_TOURS);
+    console.log('✅ Inserted all tours');
 
-      // Transform _id to id for frontend compatibility
-      const transformed = tours.map(tour => ({
-        ...tour,
-        id: tour.id || tour._id.toString(),
-        _id: undefined
-      }));
-
-      return res.status(200).json(transformed);
-    }
-
-    // POST - Create new tour
-    if (req.method === 'POST') {
-      const tourData = req.body;
-      
-      // Ensure tour has an id
-      if (!tourData.id) {
-        tourData.id = `tour-${Date.now()}`;
-      }
-      
-      tourData.createdAt = new Date().toISOString();
-
-      const result = await db.collection('tours').insertOne(tourData);
-
-      return res.status(201).json({
-        ...tourData,
-        id: tourData.id
-      });
-    }
-
-    res.status(405).json({ error: 'Method not allowed' });
+    return res.status(200).json({ 
+      success: true, 
+      message: `Successfully reseeded ${ALL_TOURS.length} tours`,
+      count: ALL_TOURS.length
+    });
   } catch (error) {
-    console.error('Tours API Error:', error);
-    res.status(500).json({ error: 'Internal server error: ' + error.message });
+    console.error('Reseed API Error:', error);
+    res.status(500).json({ error: 'Failed to reseed tours: ' + error.message });
   }
 }
+

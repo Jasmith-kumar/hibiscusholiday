@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 // API Base URL - uses relative URL in production (Vercel), localhost in development
-const API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';
+const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 // How often to check if password was changed (in milliseconds)
 const SESSION_CHECK_INTERVAL = 30000; // 30 seconds

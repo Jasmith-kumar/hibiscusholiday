@@ -3,7 +3,7 @@ import { Tour, Inquiry } from '../types';
 import { TOURS as INITIAL_TOURS } from '../constants';
 
 // API Base URL - uses relative URL in production (Vercel), localhost in development
-const API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';
+const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 interface DataContextType {
   tours: Tour[];
